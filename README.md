@@ -5,6 +5,13 @@ Create a war artifact from a Grails project and rename it in the format:
 
 ## Install
 
+### Requirements
+
+Wargery uses the `subprocess:run` function which was added in Python 3.5 (see
+the [documentation](https://docs.python.org/3/library/subprocess.html)). If you
+want to use it with a previous version of Python, you will need to modify
+`wargery/app.py` and possibly `setup.py` accordingly.
+
 ### On Linux (or WSL)
 
 To install for a single user, clone this repository then:
