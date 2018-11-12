@@ -12,6 +12,11 @@ the [documentation](https://docs.python.org/3/library/subprocess.html)). If you
 want to use it with a previous version of Python, you will need to modify
 `wargery/app.py` and possibly `setup.py` accordingly.
 
+Note that in Ubuntu 18.04 (and probably other distros), the `python` command
+points to a Python 2.7 install, and `pip` points to its package manager. If that
+is the case, you need to install wargery with `pip3` to make sure it is using
+your `python3` package.
+
 ### On Linux (or WSL)
 
 To install for a single user, clone this repository then:
