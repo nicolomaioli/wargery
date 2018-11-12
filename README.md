@@ -23,11 +23,12 @@ To install for a single user, clone this repository then:
 
 ```
 $ cd /path/to/wargery
-$ pip install . -- user
+$ pip install . --user
 ```
 
 This will install wargery to `~/.local/bin/`, just make sure it's in your path
-and you're good to go.
+and you're good to go (you can also have a look at
+[this](https://github.com/pypa/pip/issues/3813) issue on pip).
 
 ### On Mac or Windows
 
