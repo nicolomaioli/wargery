@@ -3,8 +3,22 @@ import glob
 import subprocess
 import re
 import sys
-
+import argparse
 from datetime import date
+
+
+def parse_options():
+    parser = argparse.ArgumentParser(
+        description="Create a sensibly named war artifact from a Grails project"
+    )
+    parser.add_argument(
+        "--build-nr",
+        dest="build_nr",
+        help="Specify build number",
+        type=int
+    )
+
+    return parser.parse_args()
 
 
 def parse_application_properties():
@@ -42,10 +56,10 @@ def get_source_name():
     return "{}-{}".format(d['app.name'], d['app.version'])
 
 
-def get_target_name():
+def get_target_name(build_nr=None):
     """
     Create a file name in the form:
-    'project'-'date'-'nr'
+    'project'-'date'-'n'
     """
 
     path = os.getcwd()
@@ -54,9 +68,13 @@ def get_target_name():
     artifact_name = "{}-{}".format(project_name, today)
 
     # If a war artifact with the same name already exists, append -n
-    glob_list = glob.glob("target/{0}*.war".format(artifact_name))
-    if (glob_list):
-        artifact_name = "{0}-{1}".format(artifact_name, len(glob_list))
+    glob_list = glob.glob("target/{}*.war".format(artifact_name))
+
+    # -n can also be specified as a parameter
+    n = build_nr if build_nr else len(glob_list)
+
+    if (n):
+        artifact_name = "{}-{}".format(artifact_name, n)
 
     return artifact_name
 
@@ -87,7 +105,8 @@ def create_war_artifact():
 
 def run():
     source = get_source_name()
-    target = get_target_name()
+    opt = parse_options()
+    target = get_target_name(opt.build_nr)
 
     cleaned = clean_application()
 
