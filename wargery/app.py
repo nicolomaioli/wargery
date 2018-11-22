@@ -61,6 +61,18 @@ def get_target_name():
     return artifact_name
 
 
+def clean_application():
+    """
+    Run 'grails clean'
+    """
+
+    try:
+        return subprocess.run(["grails", "clean"])
+    except FileNotFoundError:
+        print("Grails is not installed.")
+        sys.exit(1)
+
+
 def create_war_artifact():
     """
     Run 'grails war'
@@ -76,6 +88,15 @@ def create_war_artifact():
 def run():
     source = get_source_name()
     target = get_target_name()
+
+    cleaned = clean_application()
+
+    if (cleaned.returncode == 0):
+        print("Application cleaned, ready to create war artifact")
+    else:
+        print("Clean failed, returncode: {}".format(cleaned.returncode))
+        sys.exit(cleaned.returncode)
+
     completed = create_war_artifact()
 
     if (completed.returncode == 0):
@@ -83,6 +104,7 @@ def run():
         os.rename("target/{}.war".format(source), "target/{}.war".format(target))
         print("Moved target/{} to target/{}.war".format(source, target))
     else:
+        print("Build failed, returncode: {}".format(completed.returncode))
         sys.exit(completed.returncode)
 
 
