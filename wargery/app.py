@@ -122,6 +122,10 @@ def run():
         print("War artifact created")
         os.rename("target/{}.war".format(source), "target/{}.war".format(target))
         print("Moved target/{} to target/{}.war".format(source, target))
+
+        # Finally, print the name of the war artifact for piping
+        print("target/{}".format(target))
+
     else:
         print("Build failed, returncode: {}".format(completed.returncode))
         sys.exit(completed.returncode)
