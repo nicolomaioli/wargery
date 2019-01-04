@@ -2,3 +2,4 @@ venv/
 build/
 dist/
 wargery.egg-info/
+__pycache__/
