@@ -131,7 +131,7 @@ def run():
         sys.exit(completed.returncode)
 
     # Return the path to the war artifact
-    return "target/{}".format(target)
+    return "target/{}.war".format(target)
 
 
 if __name__ == '__main__':
