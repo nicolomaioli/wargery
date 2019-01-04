@@ -104,6 +104,9 @@ def create_war_artifact():
 
 
 def run():
+    """
+    The function exposed by the public API
+    """
     source = get_source_name()
     opt = parse_options()
     target = get_target_name(opt.build_nr)
@@ -123,12 +126,12 @@ def run():
         os.rename("target/{}.war".format(source), "target/{}.war".format(target))
         print("Moved target/{} to target/{}.war".format(source, target))
 
-        # Finally, print the name of the war artifact for piping
-        print("target/{}".format(target))
-
     else:
         print("Build failed, returncode: {}".format(completed.returncode))
         sys.exit(completed.returncode)
+
+    # Return the path to the war artifact
+    return "target/{}".format(target)
 
 
 if __name__ == '__main__':
