@@ -1,9 +1,0 @@
-README.md
-setup.py
-wargery/__init__.py
-wargery/app.py
-wargery.egg-info/PKG-INFO
-wargery.egg-info/SOURCES.txt
-wargery.egg-info/dependency_links.txt
-wargery.egg-info/entry_points.txt
-wargery.egg-info/top_level.txt
