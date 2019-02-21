@@ -21,10 +21,12 @@ def parse_options():
     )
 
     parser.add_argument(
+        "--name-after-commit",
         "-c",
         dest="name_after_commit",
+        default=False,
         action="store_true",
-        default=False
+        help="Name artifact after current commit (short) hash"
     )
 
     return parser.parse_args()
@@ -181,6 +183,20 @@ def run(config=None):
         opt = parse_options()
 
     target = get_target_name(opt.name_after_commit, opt.build_nr)
+
+    if opt.name_after_commit:
+        glob_list = glob.glob(
+            os.path.join(
+                "target",
+                "{}.war".format(target)
+            )
+        )
+
+        if len(glob_list) > 0:
+            print("A war artifact from the current commit already exists")
+            print("Skipping war artifact creation and exiting now.")
+            return "{}.war".format(target)
+
     cleaned = clean_application()
 
     if (cleaned.returncode == 0):
