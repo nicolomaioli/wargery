@@ -11,11 +11,19 @@ def parse_options():
     parser = argparse.ArgumentParser(
         description="Create a sensibly named war artifact from a Grails project"
     )
+
     parser.add_argument(
         "--build-nr",
         dest="build_nr",
         help="Specify build number",
         type=int
+    )
+
+    parser.add_argument(
+        "-c",
+        dest="name_after_commit",
+        action="store_true",
+        default=False
     )
 
     return parser.parse_args()
@@ -56,7 +64,7 @@ def get_source_name():
     return "{}-{}".format(d['app.name'], d['app.version'])
 
 
-def get_target_name(build_nr=None):
+def get_target_name(name_after_commit, build_nr=None):
     """
     Create a file name in the form:
     'project'-'date'-'n'
@@ -64,11 +72,30 @@ def get_target_name(build_nr=None):
 
     path = os.getcwd()
     project_name = os.path.basename(path)
+
+    if name_after_commit:
+        artifact_name = name_with_commit(project_name)
+    else:
+        artifact_name = name_with_date(project_name, build_nr)
+
+    return artifact_name
+
+
+def name_with_date(project_name, build_nr=None):
+    """
+    Create a file name in the form:
+    'project'-'date'-'n'
+    """
     today = date.today().__str__()
     artifact_name = "{}-{}".format(project_name, today)
 
     # If a war artifact with the same name already exists, append -n
-    glob_list = glob.glob("target/{}*.war".format(artifact_name))
+    glob_list = glob.glob(
+        os.path.join(
+            "target",
+            "{}*.war".format(artifact_name)
+        )
+    )
 
     # -n can also be specified as a parameter
     n = build_nr if build_nr else len(glob_list)
@@ -77,6 +104,43 @@ def get_target_name(build_nr=None):
         artifact_name = "{}-{}".format(artifact_name, n)
 
     return artifact_name
+
+
+def check_git():
+    """
+    Check if the current directory is a git repository
+    """
+    cmd = ["git", "rev-parse", "--git-dir"]
+    completed = subprocess.run(
+        cmd,
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE
+    )
+
+    return True if completed.returncode == 0 else False
+
+
+def name_with_commit(project_name):
+    """
+    Create a file name in the form:
+    'project'-'commit hash'-'n'
+    """
+    is_git_repository = check_git()
+
+    if is_git_repository:
+        completed = subprocess.run(
+            ['git', 'rev-parse', '--short', 'HEAD'],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            encoding='utf-8')
+
+        commit = completed.stdout.rstrip()
+        return "{}-{}".format(project_name, commit)
+    else:
+        print("The current directory is not a git repository")
+        sys.exit(1)
 
 
 def clean_application():
@@ -103,14 +167,19 @@ def create_war_artifact():
         sys.exit(1)
 
 
-def run():
+def run(config=None):
     """
     The function exposed by the public API
+    It takes an optional config object that overrides the parser
     """
     source = get_source_name()
-    opt = parse_options()
-    target = get_target_name(opt.build_nr)
 
+    if config:
+        opt = config
+    else:
+        opt = parse_options()
+
+    target = get_target_name(opt.name_after_commit, opt.build_nr)
     cleaned = clean_application()
 
     if (cleaned.returncode == 0):
@@ -123,15 +192,15 @@ def run():
 
     if (completed.returncode == 0):
         print("War artifact created")
-        os.rename("target/{}.war".format(source), "target/{}.war".format(target))
+        os.rename(
+            "target/{}.war".format(source),
+            "target/{}.war".format(target)
+        )
         print("Moved target/{} to target/{}.war".format(source, target))
 
     else:
         print("Build failed, returncode: {}".format(completed.returncode))
         sys.exit(completed.returncode)
-
-    # Return the path to the war artifact
-    return "target/{}.war".format(target)
 
 
 if __name__ == '__main__':
