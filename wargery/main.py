@@ -15,6 +15,7 @@ def parse_options():
     parser.add_argument(
         "--build-nr",
         dest="build_nr",
+        nargs=1,
         help="Specify build number",
         type=int
     )
@@ -193,14 +194,23 @@ def run(config=None):
     if (completed.returncode == 0):
         print("War artifact created")
         os.rename(
-            "target/{}.war".format(source),
-            "target/{}.war".format(target)
+            os.path.join(
+                "target",
+                "{}.war".format(source)
+            ),
+            os.path.join(
+                "target",
+                "{}.war".format(target)
+            )
         )
         print("Moved target/{} to target/{}.war".format(source, target))
 
     else:
         print("Build failed, returncode: {}".format(completed.returncode))
         sys.exit(completed.returncode)
+
+    # Return artifact name
+    return "{}.war".format(target)
 
 
 if __name__ == '__main__':
