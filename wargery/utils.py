@@ -141,7 +141,7 @@ def name_with_commit(project_name):
             stdin=PIPE,
             stdout=PIPE,
             stderr=PIPE,
-            encoding='utf-8'
+            universal_newlines=True
         )
 
         stdout, stderr = proc.communicate()
