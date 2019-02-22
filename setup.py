@@ -8,6 +8,6 @@ setup(
     author_email='nicolomaioli@gmail.com',
     packages=find_packages(),
     entry_points={
-        'console_scripts':['wargery=wargery.wargery:create_war_artifact']
+        'console_scripts': ['wargery=wargery.wargery:create_war_artifact']
     }
 )

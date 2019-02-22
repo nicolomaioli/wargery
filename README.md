@@ -33,6 +33,9 @@ This package uses `setuptools` Have a look at the documentation
 
 Check out `wargery -h` for a list of CLI options.
 
+For an example of a package using `wargery` as a dependency, check out
+[Sarnieploy](https://github.com/nicolomaioli/sarnieploy).
+
 ## Is this on PyPI?
 
 Nope.
