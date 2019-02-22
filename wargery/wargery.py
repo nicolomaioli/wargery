@@ -21,17 +21,19 @@ def create_war_artifact(
     """
     print("You have summoned the Wargery")
 
+    if __name__ == "__main__":
+        opt = parse_options()
+        name_after_date = opt.name_after_date
+        build_nr = opt.build_nr
+
     source = get_source_name()
-    opt = parse_options()
-    name_after_date = opt.name_after_date
-    build_nr = opt.build_nr
     target = get_target_name(name_after_date, build_nr)
 
     print("Creating war artifact {}.war".format(target))
 
     name_after_commit = True
 
-    if opt.name_after_date:
+    if name_after_date:
         name_after_commit = False
 
     if name_after_commit:
