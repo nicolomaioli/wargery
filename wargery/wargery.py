@@ -1,5 +1,4 @@
 import os
-import glob
 import sys
 from wargery.utils import (
     parse_options,
@@ -37,14 +36,14 @@ def create_war_artifact(
         name_after_commit = False
 
     if name_after_commit:
-        glob_list = glob.glob(
+        already_exists = os.path.isfile(
             os.path.join(
                 "target",
                 "{}.war".format(target)
             )
         )
 
-        if len(glob_list) > 0:
+        if already_exists:
             print("A war artifact from the current commit already exists")
             print("Skipping war artifact creation and exiting now.")
             return "{}.war".format(target)

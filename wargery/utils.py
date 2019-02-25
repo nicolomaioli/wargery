@@ -40,8 +40,9 @@ def parse_application_properties():
 
     skip_comment = re.compile('^#')
     application_properties = {}
+    is_valid = os.path.isfile("application.properties")
 
-    if not (glob.glob('application.properties')):
+    if not is_valid:
         print("No 'application.properties' file found.")
         sys.exit(1)
 
